@@ -75,6 +75,17 @@ export default function CalendarPage() {
     }
   };
 
+  const handleDismissSlot = async (emailId: string, start: string, end: string) => {
+    try {
+      const success = await api.deleteProposedSlot(emailId, start, end);
+      if (success) {
+        fetchEvents();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="min-h-screen pl-64 bg-[#FAFAFA] dark:bg-transparent">
       <Sidebar />
@@ -172,13 +183,23 @@ export default function CalendarPage() {
                             <Check className="w-3 h-3" /> Booked!
                           </div>
                         ) : (
-                          <button
-                            onClick={() => handleBookMock(idx, slot.summary, slot.start, slot.end, slot.sender)}
-                            disabled={booking}
-                            className="w-full py-2 bg-black hover:bg-slate-900 dark:bg-black dark:hover:bg-slate-900 text-white rounded-xl text-[10px] font-bold transition-all disabled:opacity-50 hover:scale-[1.01] cursor-pointer"
-                          >
-                            {booking && bookedSlotIdx === idx ? 'Scheduling...' : 'Accept & Book'}
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleBookMock(idx, slot.summary, slot.start, slot.end, slot.sender)}
+                              disabled={booking}
+                              className="flex-1 py-2 bg-black hover:bg-slate-900 dark:bg-black dark:hover:bg-slate-900 text-white rounded-xl text-[10px] font-bold transition-all disabled:opacity-50 hover:scale-[1.01] cursor-pointer"
+                            >
+                              {booking && bookedSlotIdx === idx ? 'Scheduling...' : 'Accept & Book'}
+                            </button>
+                            <button
+                              onClick={() => handleDismissSlot(slot.email_id, slot.start, slot.end)}
+                              disabled={booking}
+                              className="p-2 border border-slate-200 dark:border-slate-800 hover:bg-rose-50 dark:hover:bg-rose-950/20 text-slate-400 hover:text-rose-500 rounded-xl transition-all cursor-pointer shrink-0"
+                              title="Dismiss proposed slot"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         )}
                       </div>
                     ))

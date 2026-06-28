@@ -10,20 +10,21 @@ Analyze the email below and create a high-quality summary based on its Category 
 
 Tone Preference: {tone_preference}
 
-CRITICAL REQUIREMENT:
-The summary MUST be at least 50 words in length. Be thorough, descriptive, and explain all relevant context, background details, and next steps to satisfy this word limit requirement.
+CRITICAL REQUIREMENTS:
+1. DDo not include HTML, Markdown, URLs, email addresses, formatting, styling, images, signatures, disclaimers, or unsubscribe content unless they contain important information in the summary. Keep the output as plain text only.
+2. Do NOT include any information, descriptions, or references regarding the email's formatting, CSS styling, HTML structural layout, design assets (like templates, grids, or buttons), or images.
+3. Focus strictly and exclusively on the semantic content—what the sender wants to communicate (e.g., topics, questions, action items, dates, venue, schedules, billing details, next steps).
+4. Keep the summary clear, well-structured, and concise. No minimum length is required.
 
 Instructions:
 1. If the email is PROMOTION related, make sure to extract and explain exactly what is being promoted (products, offers, discounts, services, etc.) and who is offering it.
 2. If the email is a MEETING REQUEST, make sure to extract and explain:
    - What the meeting is about (purpose).
    - When the meeting is scheduled or proposed (dates, times).
-   - Where the meeting is hosted (Zoom link, Google Meet, address, or location details).
-3. If the email is a NEWSLETTER, make sure to extract and display every important detail about the news, updates, articles, or trends mentioned.
-4. If the email is PERSONAL, provide a warm and comprehensive summary of the message context and conversation.
+   - Where the meeting is hosted (mention the platform name e.g. Zoom, Google Meet, but DO NOT include URL links).
+3. If the email is a NEWSLETTER, make sure to extract and display the important details about the news, updates, articles, or trends mentioned.
+4. If the email is PERSONAL, provide a warm summary of the message context and conversation.
 5. Otherwise (e.g. Finance, spam, etc.), highlight the main billing/invoice requests, deadlines, and key terms.
-
-Keep the summary clear, well-structured, and highly detailed.
 
 Email Details:
 From: {sender}

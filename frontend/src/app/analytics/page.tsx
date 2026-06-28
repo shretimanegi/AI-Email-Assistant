@@ -73,27 +73,47 @@ export default function AnalyticsPage() {
             {/* Middle Row: Trend & Category maps */}
             <div className="grid grid-cols-3 gap-6">
               {/* Trend Chart (Pure SVG) */}
-              <div className="col-span-2 glass-card p-6 border-white/20 bg-white/50 dark:bg-slate-900/15 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 mb-6 flex items-center gap-2">
-                    <BarChart3 className="w-4.5 h-4.5 text-[#CDB4DB]" />
-                    Weekly Processing Volume
-                  </h3>
-                  
-                  {/* SVG Bar Chart */}
-                  <div className="w-full h-40 flex items-end justify-between px-4 pb-2 border-b border-slate-200/50">
+              <div className="col-span-2 glass-card pt-6 px-6 pb-2 border-white/20 bg-white/50 dark:bg-slate-900/15 flex flex-col justify-between overflow-hidden">
+                <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2 mb-4">
+                  <BarChart3 className="w-4.5 h-4.5 text-[#CDB4DB]" />
+                  Weekly Processing Volume
+                </h3>
+                
+                {/* SVG Bar Chart */}
+                <div className="w-full flex-1 flex flex-col px-4 mt-auto min-h-[160px] justify-end">
+                  {/* Bars Container */}
+                  <div 
+                    className="w-full flex-1 flex items-end justify-between border-b border-slate-200/50 pb-0 mb-2"
+                  >
+                    {(() => {
+                      const maxVal = Math.max(...data.trend.map(t => t.processed), 1);
+                      return data.trend.map((t, idx) => {
+                        const relativePercent = Math.round((t.processed / maxVal) * 100);
+                        const barHeightPercent = relativePercent;
+                        return (
+                          <div 
+                            key={idx} 
+                            className="relative w-[12%] max-w-[36px] flex items-end group cursor-pointer"
+                            style={{ height: `${barHeightPercent}%` }}
+                          >
+                            {/* Hover Tooltip */}
+                            <div className="absolute -translate-y-12 bg-slate-850 text-white text-[9px] font-bold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 left-1/2 -translate-x-1/2">
+                              {relativePercent}% volume
+                            </div>
+                            {/* Bar */}
+                            <div
+                              className="w-full h-full rounded-t bg-gradient-to-t from-[#BDE0FE] to-[#CDB4DB] transition-all duration-300 group-hover:scale-y-105 origin-bottom"
+                            />
+                          </div>
+                        );
+                      });
+                    })()}
+                  </div>
+                  {/* Day Labels Row */}
+                  <div className="w-full flex justify-between mt-1">
                     {data.trend.map((t, idx) => (
-                      <div key={idx} className="flex flex-col items-center gap-2 group cursor-pointer w-10">
-                        {/* Hover Tooltip */}
-                        <div className="absolute -translate-y-12 bg-slate-850 text-white text-[9px] font-bold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-                          {t.processed} emails
-                        </div>
-                        {/* Bar */}
-                        <div
-                          className="w-8 rounded-t-lg bg-gradient-to-t from-[#BDE0FE] to-[#CDB4DB] transition-all duration-300 group-hover:scale-y-105"
-                          style={{ height: `${(t.processed / 15) * 120}px` }}
-                        />
-                        <span className="text-[10px] text-slate-400 font-bold mt-1">{t.day}</span>
+                      <div key={idx} className="w-[12%] max-w-[36px] text-center">
+                        <span className="text-[10px] text-slate-400 font-bold">{t.day}</span>
                       </div>
                     ))}
                   </div>

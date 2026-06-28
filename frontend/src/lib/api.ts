@@ -336,6 +336,18 @@ export const api = {
     }
   },
 
+  async deleteProposedSlot(emailId: string, start: string, end: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${BASE_URL}/calendar/proposed-slots?email_id=${encodeURIComponent(emailId)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`, {
+        method: 'DELETE',
+        headers: getHeaders()
+      });
+      return res.ok;
+    } catch {
+      return true;
+    }
+  },
+
   // Calendar
   async getUpcomingMeetings(days: number = 7): Promise<any[]> {
     try {

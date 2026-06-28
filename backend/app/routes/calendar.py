@@ -79,7 +79,16 @@ async def list_proposed_slots(
                     "sender": email.sender
                 })
                 
-    return proposed_slots
+    # Deduplicate proposed slots by key (start, end, summary)
+    seen = set()
+    deduped_slots = []
+    for slot in proposed_slots:
+        key = (slot["start"], slot["end"], slot["summary"])
+        if key not in seen:
+            seen.add(key)
+            deduped_slots.append(slot)
+            
+    return deduped_slots
 
 @router.get("/events")
 async def list_upcoming_events(
@@ -208,3 +217,34 @@ async def delete_calendar_event(
         return {"success": True, "message": "Mock event deleted."}
         
     return {"success": True, "message": "Event not found or already deleted."}
+
+@router.delete("/proposed-slots")
+async def delete_proposed_slot(
+    email_id: str,
+    start: str,
+    end: str,
+    current_user: User = Depends(get_current_user)
+):
+    """Delete/dismiss a proposed meeting slot from cached actions."""
+    cache_key = f"email_actions:{email_id}"
+    cached_actions = redis_cache.get(cache_key)
+    
+    if not cached_actions:
+        # Mock mode fallback (if cache is empty but we want to simulate deletion in frontend)
+        return {"success": True, "message": "Mock proposed slot dismissed."}
+        
+    calendar_data = cached_actions.get("calendar", {})
+    slots = calendar_data.get("suggested_slots", [])
+    
+    # Filter out the slot matching the start and end time
+    updated_slots = [s for s in slots if not (s.get("start") == start and s.get("end") == end)]
+    
+    calendar_data["suggested_slots"] = updated_slots
+    if not updated_slots:
+        calendar_data["intent_detected"] = False
+        
+    cached_actions["calendar"] = calendar_data
+    redis_cache.set(cache_key, cached_actions, expire_seconds=86400)
+    
+    return {"success": True, "message": "Proposed slot dismissed successfully."}
+
